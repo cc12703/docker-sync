@@ -13,6 +13,9 @@ def main():
 	socket_path = os.path.join(args.folder,"docker_sync_ssh_socket_%s"%current_time)
 	ssh = ["ssh", args.remote, "-o", "ControlPath=%s"%socket_path]
 
+	if args.idfile is not None:
+		ssh += ["-i", args.idfile]
+
 	print("Connecting to %s."%args.remote)
 	master, output = create_master_connection(ssh)
 	if output is not None:
@@ -180,6 +183,7 @@ def parse_args():
 	parser.add_argument('-u', "--update", dest="update",  action="store_true", default=False, help='Synchronize the images that need update.')
 	parser.add_argument('-n', "--new", dest="new",  action="store_true", default=False, help='Synchronize the images that are new.')
 	parser.add_argument('-p', "--push", dest="push", action="store_true", default=False, help='Push images instead of pulling.')
+	parser.add_argument('-i', "--idfile", dest="idfile", type=str, default=None, help='The path to the identity file of ssh')
 
 	def folder(path):
 		if os.path.isdir(path):	return os.path.abspath(path)
